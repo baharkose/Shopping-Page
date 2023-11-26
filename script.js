@@ -54,7 +54,7 @@ const category = () =>{
 //             acc.push(item.category)
 //         }
 //         return acc
-//     }, ["all"])
+//     }, ["all"]) //! İçeriyi all'dan başlat
 //     console.log(categoryArr);
 // }
 
@@ -153,6 +153,10 @@ function displayProducts(arr) {
                  //! gücellemelerde obje ise obje dön ki yerine geçen yine obje olsun.
                 return item.id === product.id ? {...item, quantity:item.quantity+1}: item
                     // Bu yapı çok kullanılacak.
+                    //? hangisi ne kadar artacak. o nedenle item id == product id dedik.
+                    //* ...item ne demek bunun içini aç ve içindekileri buraya ata.
+                    //* önce eski verileri al. Sonra güncelleyeceğin verileri eski verilerin peşine ekle.
+                    //* quantity:quantity:item.quantity+1 -> yeni değeri yaz. quantity, eski veriyi yakala ve onu bir arttır. item.quantity+1
                 })
     }
     else{
@@ -164,10 +168,11 @@ function displayProducts(arr) {
 
 
   btnDivs.addEventListener("click", (e) =>{
-    if(e.target.classList("btn"){
+    if(e.target.classList("btn")){
         const selectedCategory = e.target.innerText.toLowerCase()
-        categoryTitle = 
-    })
+        // categoryTitle = 
+    };
+    
   })
 
   
