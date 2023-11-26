@@ -9,6 +9,10 @@ const modalBody = document.querySelector(".modal-body")
 let products = [];
 let baskets = [];
 
+
+
+//* FETCH İŞLEMİ
+
 const getProducts = async () => {
   const url = "https://anthonyfs.pythonanywhere.com/api/products/";
   const response = await fetch(url);
@@ -28,6 +32,10 @@ const getProducts = async () => {
 };
 
 getProducts();
+
+
+
+//* KATEGORİ İŞLEMİ
 
 const category = () => {
   console.log(products);
@@ -91,6 +99,10 @@ const category = () => {
 //  senkron yapısından dolayı veriyi göremiyoruz. [] verir halbuki veri vardır
 console.log(products);
 
+
+
+//* ÜRÜNLERİ LİSTELEME
+
 function displayProducts(arr) {
   productDivs.innerHTML = "";
   arr.forEach((item) => {
@@ -122,10 +134,7 @@ function displayProducts(arr) {
 
     productDiv.addEventListener("click", (e) => {
       if (e.target.classList.contains("btn-danger")) {
-        // sepete ekle butonunu yakala
-        // ürünleri sepete ekle
-
-        addToCart(item);
+            addToCart(item);
 
         //! arrayden gelen ürün bilgisi elimizde olduğu için direk itemi yani seçilen ürünü aldık ve baskete yolladık.
       }
@@ -152,9 +161,6 @@ function showModal(product){
     </div>
     
     `
-
-
-
     //! ikinci yol
 
     // fetch(`https://anthonyfs.pythonanywhere.com/api/products/${product.id}`)
@@ -170,10 +176,11 @@ function showModal(product){
 }
 
 
-// ! SAKLA
+// ! SAKLA -- MAP İLE İÇERİK DEĞİŞTİRME
 
 //! ADD TO CART
 //* objelerde veri saklama yolu {key:value}
+
 function addToCart(product) {
   console.log(product);
 
@@ -196,6 +203,8 @@ function addToCart(product) {
     baskets.push(product);
   }
   console.log(baskets);
+  showCanvas(baskets)
+  calculateProducts(baskets)
 }
 
 btnDivs.addEventListener("click", (e) => {
@@ -227,6 +236,8 @@ btnDivs.addEventListener("click", (e) => {
   }
 });
 
+
+
 //! inputtan gelenleri yakalama- inputtan gelen veriyi yazdığımızda da kategori alanın değişmesi
 searchInput.addEventListener("input", (e) => {
   const value = e.target.value.toLowerCase();
@@ -248,4 +259,63 @@ function filtered(selectedCategory, value) {
             item.title.includes(value.toLowerCase())
         );
   return newArr;
+}
+
+
+
+
+//* SHOW CANVAS
+
+const showCanvas = (baskets) =>{
+    console.log(baskets);
+    
+    const canvasBody = document.querySelector(".offcanvas-body")
+    canvasBody.innerHTML =""
+
+    baskets.forEach((basket) => {
+
+    const {title, quantity, price, image } = basket;
+        
+        canvasBody.innerHTML += `
+                <div class="card mb-3" style="max-width: 540px">
+                <div class="row g-0">
+                <div class="col-md-4 my-auto">
+                    <img
+                    src="${image}"
+                    class="img-fluid rounded-start"
+                   
+                    />
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                    <h5 class="card-title">${title}</h5>
+                    <div class="d-flex align-items-center gap-2" role="button">
+                        <i
+                        class="fa-solid fa-minus border rounded-circle bg-danger text-white p-2"
+                        ></i
+                        ><span class="fw-bold">${quantity}</span
+                        ><i
+                        class="fa-solid fa-plus border bg-danger text-white rounded-circle p-2"
+                        ></i>
+                    </div>
+                    <p class="card-text">Total : ${price} x ${quantity}</p>
+                    <button class="btn btn-danger">Remove</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+    
+    `
+
+        
+    });
+    
+    
+}
+
+
+//* CALCULATION
+
+const calculateProducts = (baskets) =>{
+
 }
