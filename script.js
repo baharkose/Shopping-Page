@@ -2,14 +2,16 @@ const btnDivs = document.getElementById("btns");
 const productDivs = document.getElementById("products");
 const searchInput = document.getElementById("searchInput");
 const categoryTitle = document.getElementById("category");
-const modalBody = document.querySelector(".modal-body")
+const modalBody = document.querySelector(".modal-body");
+const canvasBody = document.querySelector(".offcanvas-body");
+const minus = document.querySelector(".fa-minus")
+const plus = document.querySelector(".fa-plus")
+
 
 // https://anthonyfs.pythonanywhere.com/api/products/
 
 let products = [];
 let baskets = [];
-
-
 
 //* FETCH İŞLEMİ
 
@@ -32,8 +34,6 @@ const getProducts = async () => {
 };
 
 getProducts();
-
-
 
 //* KATEGORİ İŞLEMİ
 
@@ -99,8 +99,6 @@ const category = () => {
 //  senkron yapısından dolayı veriyi göremiyoruz. [] verir halbuki veri vardır
 console.log(products);
 
-
-
 //* ÜRÜNLERİ LİSTELEME
 
 function displayProducts(arr) {
@@ -134,25 +132,23 @@ function displayProducts(arr) {
 
     productDiv.addEventListener("click", (e) => {
       if (e.target.classList.contains("btn-danger")) {
-            addToCart(item);
+        addToCart(item);
 
         //! arrayden gelen ürün bilgisi elimizde olduğu için direk itemi yani seçilen ürünü aldık ve baskete yolladık.
-      }
-      else if(e.target.classList.contains("btn-primary")){
-        showModal(item)
+      } else if (e.target.classList.contains("btn-primary")) {
+        showModal(item);
       }
     });
     productDivs.append(productDiv);
   });
 }
 
-
 //! SHOW MODAL
 
-function showModal(product){
-    const {image,title,description,price} = product
+function showModal(product) {
+  const { image, title, description, price } = product;
 
-    modalBody.innerHTML = `
+  modalBody.innerHTML = `
     <div class="text-center">
     <img src="${image}" class="p-2" height="250px" alt="...">
     <h5 class="card-title">${title}</h5>
@@ -160,21 +156,20 @@ function showModal(product){
     <p class="card-text">Fiyat: ${price} $</p>
     </div>
     
-    `
-    //! ikinci yol
+    `;
+  //! ikinci yol
 
-    // fetch(`https://anthonyfs.pythonanywhere.com/api/products/${product.id}`)
-    //   .then((res) => res.json())
-    //   .then((res) => {
-    //     modalBody.innerHTML = `<div class="text-center">
-    //           <img src="${res.image}" class="p-2" height="250px" alt="...">
-    //           <h5 class="card-title">${res.title}</h5>
-    //           <p class="card-text">${res.description}</p>
-    //           <p class="card-text">Fiyat: ${res.price} $</p>
-    //           </div>
-    //           `;
+  // fetch(`https://anthonyfs.pythonanywhere.com/api/products/${product.id}`)
+  //   .then((res) => res.json())
+  //   .then((res) => {
+  //     modalBody.innerHTML = `<div class="text-center">
+  //           <img src="${res.image}" class="p-2" height="250px" alt="...">
+  //           <h5 class="card-title">${res.title}</h5>
+  //           <p class="card-text">${res.description}</p>
+  //           <p class="card-text">Fiyat: ${res.price} $</p>
+  //           </div>
+  //           `;
 }
-
 
 // ! SAKLA -- MAP İLE İÇERİK DEĞİŞTİRME
 
@@ -202,9 +197,12 @@ function addToCart(product) {
   } else {
     baskets.push(product);
   }
+
+  
+
   console.log(baskets);
-  showCanvas(baskets)
-  calculateProducts(baskets)
+  showCanvas(baskets);
+  calculateProducts(baskets);
 }
 
 btnDivs.addEventListener("click", (e) => {
@@ -227,7 +225,7 @@ btnDivs.addEventListener("click", (e) => {
     //         item.title.includes(value.toLowerCase())
     //     );
 
-    const filteredProducts = filtered(selectedCategory, value)
+    const filteredProducts = filtered(selectedCategory, value);
     //! all a basınca hiç bişey gelmedi bunun için kısayoldan bir filtreleme yapısı kuralım.
 
     displayProducts(filteredProducts);
@@ -236,22 +234,20 @@ btnDivs.addEventListener("click", (e) => {
   }
 });
 
-
-
 //! inputtan gelenleri yakalama- inputtan gelen veriyi yazdığımızda da kategori alanın değişmesi
 searchInput.addEventListener("input", (e) => {
   const value = e.target.value.toLowerCase();
   const selectedCategory = categoryTitle.innerText.toLowerCase();
-  const filteredProducts = filtered(selectedCategory, value)
-  displayProducts(filteredProducts)
+  const filteredProducts = filtered(selectedCategory, value);
+  displayProducts(filteredProducts);
 });
 
 //? DRY
 
 function filtered(selectedCategory, value) {
-
-    //+ Her butona tıklandığında ve her tıklama olayınca sadece istenilen verilerin gelmesi
-  const newArr = selectedCategory === "all"
+  //+ Her butona tıklandığında ve her tıklama olayınca sadece istenilen verilerin gelmesi
+  const newArr =
+    selectedCategory === "all"
       ? products
       : products.filter(
           (item) =>
@@ -261,22 +257,16 @@ function filtered(selectedCategory, value) {
   return newArr;
 }
 
-
-
-
 //* SHOW CANVAS
 
-const showCanvas = (baskets) =>{
-    console.log(baskets);
-    
-    const canvasBody = document.querySelector(".offcanvas-body")
-    canvasBody.innerHTML =""
+const showCanvas = (baskets) => {
+  console.log(baskets);
 
-    baskets.forEach((basket) => {
+  canvasBody.innerHTML = "";
+  baskets.forEach((basket, index) => {
+    const { title, quantity, price, image } = basket;
 
-    const {title, quantity, price, image } = basket;
-        
-        canvasBody.innerHTML += `
+    canvasBody.innerHTML += `
                 <div class="card mb-3" style="max-width: 540px">
                 <div class="row g-0">
                 <div class="col-md-4 my-auto">
@@ -305,22 +295,79 @@ const showCanvas = (baskets) =>{
                 </div>
             </div>
     
-    `
+    `;
+  });
 
-        
-    });
-    
-    
-}
 
+  
+};
 
 //* CALCULATION
 
 const calculateProducts = (baskets) => {
-    const result1 = baskets.map((basket) => ({ quantity: Number(basket.quantity), price: Number(basket.price) }))
-                          .reduce((acc, basket) => acc + basket.quantity * basket.price, 0);
+  const result1 = baskets
+    .map((basket) => ({
+      quantity: Number(basket.quantity),
+      price: Number(basket.price),
+    }))
+    .reduce((acc, basket) => acc + basket.quantity * basket.price, 0);
 
-    console.log(result1);
-    const resultText = document.getElementById("total")
-    resultText.innerText = result1
-}
+  console.log(result1);
+  const resultText = document.getElementById("total");
+  resultText.innerText = result1.toFixed(2);
+};
+
+
+
+// bin.addEventListener("click", () =>{
+//     console.log(bin);
+//     if(confirm("Are you sure you want to delete this")){
+//       main.textContent = "silindi"  
+//     }
+    
+// })
+
+// kural: üstekini bul çağır bubling yap.
+
+
+//! hesaplama işlemi
+
+canvasBody.addEventListener("click", (e) => {
+    // Check if the clicked element is one of the icons
+    if (e.target.classList.contains("fa-plus")) {
+      handleQuantityChange(e.target, 1); // Increase quantity
+    } else if (e.target.classList.contains("fa-minus")) {
+      handleQuantityChange(e.target, -1); // Decrease quantity
+    }
+  });
+  
+  // Function to handle quantity change
+  function handleQuantityChange(clickedElement, change) {
+    // Get the parent card element
+    const card = clickedElement.closest(".card");
+  
+    // Extract relevant information from the card (you may need to adjust this based on your HTML structure)
+    const title = card.querySelector(".card-title").innerText;
+    const price = parseFloat(card.querySelector(".card-text").innerText.split(":")[1]);
+  
+    // Find the corresponding item in the basket
+    const basketItem = baskets.find(item => item.title === title);
+  
+    // Update the quantity in the basket
+    if (basketItem) {
+      basketItem.quantity += change;
+  
+      // Ensure the quantity is not negative
+      if (basketItem.quantity < 0) {
+        basketItem.quantity = 0;
+      }
+  
+      // Update the display
+      showCanvas(baskets);
+  
+      // Recalculate the total
+      calculateProducts(baskets);
+    }
+  }
+  
+         
