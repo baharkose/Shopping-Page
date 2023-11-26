@@ -316,6 +316,11 @@ const showCanvas = (baskets) =>{
 
 //* CALCULATION
 
-const calculateProducts = (baskets) =>{
+const calculateProducts = (baskets) => {
+    const result1 = baskets.map((basket) => ({ quantity: Number(basket.quantity), price: Number(basket.price) }))
+                          .reduce((acc, basket) => acc + basket.quantity * basket.price, 0);
 
+    console.log(result1);
+    const resultText = document.getElementById("total")
+    resultText.innerText = result1
 }
