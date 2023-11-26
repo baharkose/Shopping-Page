@@ -168,9 +168,20 @@ function displayProducts(arr) {
 
 
   btnDivs.addEventListener("click", (e) =>{
-    if(e.target.classList("btn")){
+    if(e.target.classList.contains("btn")){
+        //! butonun innerText'ini yakala. Yazdırdığını da kategori title a yazdır.
         const selectedCategory = e.target.innerText.toLowerCase()
-        // categoryTitle = 
+        categoryTitle.innerText = selectedCategory.toUpperCase();
+
+        //+ Her butona tıklandığında ve her tıklama olayınca sadece istenilen verilerin gelmesi
+
+        const filteredProducts =selectedCategory === "all" ? products : products.filter(item => item.category.toLowerCase() === selectedCategory)
+        displayProducts(filteredProducts)
+
+        //! all a basınca hiç bişey gelmedi bunun için kısayoldan bir filtreleme yapısı kuralım.
+
+        //* Seçilen kategori eğer all ise sadece productsı getir yoksa filtreleme yap. selectedCategory === "all" ? products : products.filter(item => item.category.toLowerCase() === selectedCategory)
+        
     };
     
   })
