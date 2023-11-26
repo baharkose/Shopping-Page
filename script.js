@@ -4,14 +4,15 @@ const searchInput = document.getElementById("searchInput");
 const categoryTitle = document.getElementById("category");
 const modalBody = document.querySelector(".modal-body");
 const canvasBody = document.querySelector(".offcanvas-body");
-const minus = document.querySelector(".fa-minus")
-const plus = document.querySelector(".fa-plus")
-
+const minus = document.querySelector(".fa-minus");
+const plus = document.querySelector(".fa-plus");
+const sepetPosition = document.getElementById("sepet");
 
 // https://anthonyfs.pythonanywhere.com/api/products/
 
 let products = [];
 let baskets = [];
+let countBasket = 0;
 
 //* FETCH İŞLEMİ
 
@@ -195,10 +196,10 @@ function addToCart(product) {
       //* quantity:quantity:item.quantity+1 -> yeni değeri yaz. quantity, eski veriyi yakala ve onu bir arttır. item.quantity+1
     });
   } else {
+    countBasket++;
+    sepetPosition.innerText = countBasket;
     baskets.push(product);
   }
-
-  
 
   console.log(baskets);
   showCanvas(baskets);
@@ -247,12 +248,14 @@ searchInput.addEventListener("input", (e) => {
 function filtered(selectedCategory, value) {
   //+ Her butona tıklandığında ve her tıklama olayınca sadece istenilen verilerin gelmesi
   const newArr =
-    selectedCategory === "all"
-      ? products
+    selectedCategory.toLowerCase() === "all"
+      ? products.filter((item) =>
+          item.title.toLowerCase().includes(value.toLowerCase())
+        )
       : products.filter(
           (item) =>
             item.category.toLowerCase() === selectedCategory &&
-            item.title.includes(value.toLowerCase())
+            item.title.toLowerCase().includes(value.toLowerCase())
         );
   return newArr;
 }
@@ -297,77 +300,88 @@ const showCanvas = (baskets) => {
     
     `;
   });
-
-
-  
 };
 
 //* CALCULATION
 
 const calculateProducts = (baskets) => {
-  const result1 = baskets
-    .map((basket) => ({
-      quantity: Number(basket.quantity),
-      price: Number(basket.price),
-    }))
-    .reduce((acc, basket) => acc + basket.quantity * basket.price, 0);
+  const result1 = baskets.reduce(
+    (acc, basket) => acc + basket.quantity * basket.price,
+    0
+  );
 
   console.log(result1);
   const resultText = document.getElementById("total");
   resultText.innerText = result1.toFixed(2);
 };
 
-
-
 // bin.addEventListener("click", () =>{
 //     console.log(bin);
 //     if(confirm("Are you sure you want to delete this")){
-//       main.textContent = "silindi"  
+//       main.textContent = "silindi"
 //     }
-    
+
 // })
 
 // kural: üstekini bul çağır bubling yap.
 
-
 //! hesaplama işlemi
 
 canvasBody.addEventListener("click", (e) => {
-    // Check if the clicked element is one of the icons
-    if (e.target.classList.contains("fa-plus")) {
-      handleQuantityChange(e.target, 1); // Increase quantity
-    } else if (e.target.classList.contains("fa-minus")) {
-      handleQuantityChange(e.target, -1); // Decrease quantity
-    }
-  });
-  
-  // Function to handle quantity change
-  function handleQuantityChange(clickedElement, change) {
-    // Get the parent card element
-    const card = clickedElement.closest(".card");
-  
-    // Extract relevant information from the card (you may need to adjust this based on your HTML structure)
-    const title = card.querySelector(".card-title").innerText;
-    const price = parseFloat(card.querySelector(".card-text").innerText.split(":")[1]);
-  
-    // Find the corresponding item in the basket
-    const basketItem = baskets.find(item => item.title === title);
-  
-    // Update the quantity in the basket
-    if (basketItem) {
-      basketItem.quantity += change;
-  
-      // Ensure the quantity is not negative
-      if (basketItem.quantity < 0) {
-        basketItem.quantity = 0;
-      }
-  
-      // Update the display
-      showCanvas(baskets);
-  
-      // Recalculate the total
-      calculateProducts(baskets);
-    }
+  // Check if the clicked element is one of the icons
+  if (e.target.classList.contains("fa-plus")) {
+    handleQuantityChange(e.target, 1); // Increase quantity
+  } else if (e.target.classList.contains("fa-minus")) {
+    handleQuantityChange(e.target, -1); // Decrease quantity
+  } else if (e.target.classList.contains("btn-danger")) {
+    removeItem(e.target);
   }
-  
-         
+});
+
+// Function to handle quantity change
+function handleQuantityChange(clickedElement, change) {
+  // Get the parent card element
+  const card = clickedElement.closest(".card");
+
+  // Extract relevant information from the card (you may need to adjust this based on your HTML structure)
+  const title = card.querySelector(".card-title").innerText;
+  const price = parseFloat(
+    card.querySelector(".card-text").innerText.split(":")[1]
+  );
+
+  // Find the corresponding item in the basket
+  const basketItem = baskets.find((item) => item.title === title);
+
+  // Update the quantity in the basket
+  if (basketItem) {
+    basketItem.quantity += change;
+
+    // Ensure the quantity is not negative
+    if (basketItem.quantity < 1) {
+      basketItem.quantity = 1;
+    }
+
+    // Update the display
+    showCanvas(baskets);
+
+    // Recalculate the total
+    calculateProducts(baskets);
+  }
+}
+
+const removeItem = (e) => {
+  const card = e.closest(".card");
+  // Extract relevant information from the card (you may need to adjust this based on your HTML structure)
+  const title = card.querySelector(".card-title").innerText;
+
+  //! silme işlemi title eşit değilse basket itemı güncelle
+  //+ arrayden istenileni çıkarmak için filter metoduyla olmayan hariç hepsini yazdır yaparak array güncellendi.
+
+  const basketItem = baskets.filter((item) => item.title !== title);
+  countBasket--;
+  sepetPosition.innerText = countBasket;
+  baskets = basketItem;
+  console.log(baskets);
+  showCanvas(baskets);
+  calculateProducts(baskets);
+};
