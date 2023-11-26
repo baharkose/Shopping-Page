@@ -2,6 +2,7 @@ const btnDivs = document.getElementById("btns");
 const productDivs = document.getElementById("products");
 const searchInput = document.getElementById("searchInput");
 const categoryTitle = document.getElementById("category");
+const modalBody = document.querySelector(".modal-body")
 
 // https://anthonyfs.pythonanywhere.com/api/products/
 
@@ -128,10 +129,31 @@ function displayProducts(arr) {
 
         //! arrayden gelen ürün bilgisi elimizde olduğu için direk itemi yani seçilen ürünü aldık ve baskete yolladık.
       }
+      else if(e.target.classList.contains("btn-primary")){
+        showModal(item)
+      }
     });
     productDivs.append(productDiv);
   });
 }
+
+
+//! SHOW MODAL
+
+function showModal(product){
+    const {image,title,description,price} = product
+
+    modalBody.innerHTML = `
+    <div class="text-center">
+    <img src="${image}" class="p-2" height="250px" alt="...">
+    <h5 class="card-title">${title}</h5>
+    <p class="card-text">${description}</p>
+    <p class="card-text">Fiyat: ${price} $</p>
+    </div>
+    
+    `
+}
+
 
 // ! SAKLA
 
